@@ -1,4 +1,5 @@
 pub mod receive;
+pub mod get_data;
 
 #[utoipa::path(
     get,

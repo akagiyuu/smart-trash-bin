@@ -6,7 +6,7 @@ use axum::Json;
 use crate::server::{Data, DataKind};
 use crate::{AppState, Result};
 
-async fn _receive(state: Arc<AppState>, data: Data) -> anyhow::Result<()> {
+async fn _post_data(state: Arc<AppState>, data: Data) -> anyhow::Result<()> {
     state.sender.send(data)?;
 
     match data.kind {
@@ -53,11 +53,11 @@ async fn _receive(state: Arc<AppState>, data: Data) -> anyhow::Result<()> {
 
 #[utoipa::path(
     post,
-    path = "/receive",
+    path = "/data",
     request_body = Data
 )]
-pub async fn receive(State(state): State<Arc<AppState>>, Json(data): Json<Data>) -> Result<()> {
-    _receive(state, data).await?;
+pub async fn post_data(State(state): State<Arc<AppState>>, Json(data): Json<Data>) -> Result<()> {
+    _post_data(state, data).await?;
 
     Ok(())
 }

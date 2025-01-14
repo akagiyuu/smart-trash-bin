@@ -37,7 +37,7 @@ pub fn build(state: Arc<AppState>) -> Router {
     let router = Router::new()
         .route("/", get(handler::ping))
         .route("/data", get(handler::get_data::get_data))
-        .route("/receive", post(handler::receive::receive));
+        .route("/data", post(handler::post_data::post_data));
 
     // add openapi doc and swagger
     let router = router

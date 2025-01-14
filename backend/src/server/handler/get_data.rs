@@ -25,6 +25,10 @@ async fn handle_socket(state: Arc<AppState>, mut socket: WebSocket) {
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/data",
+)]
 pub async fn get_data(State(state): State<Arc<AppState>>, ws: WebSocketUpgrade) -> impl IntoResponse {
     ws.on_upgrade(move |socket| handle_socket(state, socket))
 }

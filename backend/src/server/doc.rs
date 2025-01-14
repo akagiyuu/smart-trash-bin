@@ -6,10 +6,9 @@ use super::handler;
 #[openapi(
     paths(
         handler::ping,
-        handler::receive::receive
+        handler::get_data::get_data,
+        handler::post_data::post_data
     ),
-    components(schemas(
-        super::Data
-    ))
+    components(schemas(super::Data))
 )]
 pub struct ApiDoc;

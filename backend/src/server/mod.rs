@@ -4,7 +4,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::{DateTime, Utc};
 use doc::ApiDoc;
 use serde::Deserialize;
 use tower_http::trace::TraceLayer;
@@ -16,7 +16,7 @@ use crate::AppState;
 mod doc;
 mod handler;
 
-#[derive(Clone, Copy, Deserialize, ToSchema)]
+#[derive(Clone, Copy, Deserialize, ToSchema, Debug)]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
 pub enum DataKind {
     Status(bool),
@@ -24,7 +24,7 @@ pub enum DataKind {
     TrashLevel(f64),
 }
 
-#[derive(Clone, Copy, Deserialize, ToSchema)]
+#[derive(Clone, Copy, Deserialize, ToSchema, Debug)]
 pub struct Data {
     pub time: DateTime<Utc>,
 

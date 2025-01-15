@@ -20,8 +20,8 @@ mod handler;
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
 pub enum DataKind {
     Status(bool),
-    Moisture(f64),
-    TrashLevel(f64),
+    Moisture(f32),
+    TrashLevel(f32),
 }
 
 #[derive(Clone, Copy, Deserialize, Serialize, ToSchema, Debug)]
@@ -37,11 +37,12 @@ pub fn build(state: Arc<AppState>) -> Router {
     let router = Router::new()
         .route("/", get(handler::ping))
         .route("/data", get(handler::get_data::get_data))
-        .route("/data", post(handler::post_data::post_data));
+        .route("/data", post(handler::post_data::post_data))
+        .route("/register", post(handler::register::register));
 
     // add openapi doc and swagger
     let router = router
-        .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()));
+        .merge(SwaggerUi::new("/swagger").url("/api-docs/openapi.json", ApiDoc::openapi()));
 
     // register global middlewares
     let router = router.layer(TraceLayer::new_for_http());

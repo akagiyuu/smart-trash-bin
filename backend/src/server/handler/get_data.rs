@@ -1,17 +1,27 @@
 use std::sync::Arc;
 
-use crate::AppState;
+use crate::{database::Device, AppState, Error, Result};
+use anyhow::anyhow;
 use axum::{
     extract::{
         ws::{Message, WebSocket},
-        State, WebSocketUpgrade,
+        Path, State, WebSocketUpgrade,
     },
     response::IntoResponse,
 };
+use uuid::Uuid;
 
-async fn handle_socket(state: Arc<AppState>, mut socket: WebSocket) {
+async fn handle_socket(
+    state: Arc<AppState>,
+    device_id: Uuid,
+    mut socket: WebSocket,
+) {
     let mut receiver = state.sender.subscribe();
-    while let Ok(data) = receiver.recv().await {
+    while let Ok((remote_device_id, data)) = receiver.recv().await {
+        if remote_device_id != device_id {
+            continue;
+        }
+
         let json = match serde_json::to_string(&data) {
             Ok(v) => v,
             Err(error) => {
@@ -25,10 +35,20 @@ async fn handle_socket(state: Arc<AppState>, mut socket: WebSocket) {
     }
 }
 
-#[utoipa::path(
-    get,
-    path = "/data",
-)]
-pub async fn get_data(State(state): State<Arc<AppState>>, ws: WebSocketUpgrade) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| handle_socket(state, socket))
+#[utoipa::path(get, path = "/data")]
+pub async fn get_data(
+    State(state): State<Arc<AppState>>,
+    Path(name): Path<String>,
+    ws: WebSocketUpgrade,
+) -> Result<impl IntoResponse> {
+    let device_id = Device::get_token(name, &state.database)
+        .await
+        .map_err(|_| {
+            Error::bad_request(
+                "No device with given name",
+                anyhow!("No device with given name"),
+            )
+        })?;
+
+    Ok(ws.on_upgrade(move |socket| handle_socket(state, device_id, socket)))
 }

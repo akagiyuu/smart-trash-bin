@@ -2,49 +2,49 @@ use std::sync::Arc;
 
 use axum::extract::State;
 use axum::Json;
+use axum_extra::headers::authorization::Bearer;
+use axum_extra::headers::Authorization;
+use axum_extra::TypedHeader;
+use uuid::Uuid;
 
+use crate::database::{Moisture, Status, TrashLevel};
 use crate::server::{Data, DataKind};
 use crate::{AppState, Result};
 
-async fn _post_data(state: Arc<AppState>, data: Data) -> anyhow::Result<()> {
-    state.sender.send(data)?;
+async fn _post_data(state: Arc<AppState>, token: &str, data: Data) -> anyhow::Result<()> {
+    let device_id = Uuid::parse_str(token)?;
+
+    state.sender.send((device_id, data))?;
+
+    let time = data.time;
 
     match data.kind {
         DataKind::Status(is_open) => {
-            sqlx::query!(
-                r#"
-                    INSERT INTO statuses(time, is_open)
-                    VALUES (?, ?)
-                "#,
-                data.time,
-                is_open
-            )
-            .execute(&state.database)
-            .await?;
+            Status {
+                device_id,
+                time,
+                is_open,
+            }
+            .insert(&state.database)
+            .await?
         }
         DataKind::Moisture(moisture) => {
-            sqlx::query!(
-                r#"
-                    INSERT INTO moistures(time, moisture)
-                    VALUES (?, ?)
-                "#,
-                data.time,
-                moisture
-            )
-            .execute(&state.database)
-            .await?;
+            Moisture {
+                device_id,
+                time,
+                moisture,
+            }
+            .insert(&state.database)
+            .await?
         }
         DataKind::TrashLevel(trash_level) => {
-            sqlx::query!(
-                r#"
-                    INSERT INTO trash_levels(time, trash_level)
-                    VALUES (?, ?)
-                "#,
-                data.time,
-                trash_level
-            )
-            .execute(&state.database)
-            .await?;
+            TrashLevel {
+                device_id,
+                time,
+                trash_level,
+            }
+            .insert(&state.database)
+            .await?
         }
     }
 
@@ -56,8 +56,12 @@ async fn _post_data(state: Arc<AppState>, data: Data) -> anyhow::Result<()> {
     path = "/data",
     request_body = Data
 )]
-pub async fn post_data(State(state): State<Arc<AppState>>, Json(data): Json<Data>) -> Result<()> {
-    _post_data(state, data).await?;
+pub async fn post_data(
+    State(state): State<Arc<AppState>>,
+    TypedHeader(Authorization(bearer)): TypedHeader<Authorization<Bearer>>,
+    Json(data): Json<Data>,
+) -> Result<()> {
+    _post_data(state, bearer.token(), data).await?;
 
     Ok(())
 }

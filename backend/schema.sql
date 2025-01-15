@@ -1,14 +1,31 @@
+CREATE TABLE IF NOT EXISTS devices(
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name text NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS statuses(
-    time datetime PRIMARY KEY,
-    is_open boolean NOT NULL
+    time timestamptz,
+    device_id uuid,
+
+    is_open boolean NOT NULL,
+
+    PRIMARY KEY(time, device_id)
 );
 
 CREATE TABLE IF NOT EXISTS moistures(
-    time datetime PRIMARY KEY,
-    moisture real NOT NULL
+    time timestamptz,
+    device_id uuid,
+
+    moisture real NOT NULL,
+
+    PRIMARY KEY(time, device_id)
 );
 
 CREATE TABLE IF NOT EXISTS trash_levels(
-    time datetime PRIMARY KEY,
-    trash_level real NOT NULL
+    time timestamptz,
+    device_id uuid,
+
+    trash_level real NOT NULL,
+
+    PRIMARY KEY(time, device_id)
 );

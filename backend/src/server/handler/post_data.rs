@@ -14,7 +14,7 @@ use crate::{AppState, Result};
 async fn _post_data(state: Arc<AppState>, token: &str, data: Data) -> anyhow::Result<()> {
     let device_id = Uuid::parse_str(token)?;
 
-    state.sender.send((device_id, data))?;
+    let _ = state.sender.send((device_id, data));
 
     let time = data.time;
 
@@ -54,7 +54,8 @@ async fn _post_data(state: Arc<AppState>, token: &str, data: Data) -> anyhow::Re
 #[utoipa::path(
     post,
     path = "/data",
-    request_body = Data
+    request_body = Data,
+    security(("token" = []))
 )]
 pub async fn post_data(
     State(state): State<Arc<AppState>>,

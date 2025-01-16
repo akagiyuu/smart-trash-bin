@@ -11,11 +11,7 @@ use axum::{
 };
 use uuid::Uuid;
 
-async fn handle_socket(
-    state: Arc<AppState>,
-    device_id: Uuid,
-    mut socket: WebSocket,
-) {
+async fn handle_socket(state: Arc<AppState>, device_id: Uuid, mut socket: WebSocket) {
     let mut receiver = state.sender.subscribe();
     while let Ok((remote_device_id, data)) = receiver.recv().await {
         if remote_device_id != device_id {
@@ -35,13 +31,16 @@ async fn handle_socket(
     }
 }
 
-#[utoipa::path(get, path = "/data")]
+#[utoipa::path(
+    get,
+    path = "/data/:device_name",
+)]
 pub async fn get_data(
     State(state): State<Arc<AppState>>,
-    Path(name): Path<String>,
+    Path(device_name): Path<String>,
     ws: WebSocketUpgrade,
 ) -> Result<impl IntoResponse> {
-    let device_id = Device::get_token(name, &state.database)
+    let device_id = Device::get_token(device_name, &state.database)
         .await
         .map_err(|_| {
             Error::bad_request(

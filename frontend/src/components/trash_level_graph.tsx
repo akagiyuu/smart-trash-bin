@@ -9,16 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const formatDate = (date: Date) => date.toTimeString().slice(0, 8);
 
-const formatTooltipDate = (date: Date) => {
-    return date.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-    });
-};
-
 export type Data = {
     time: Date;
     trash_level: number;

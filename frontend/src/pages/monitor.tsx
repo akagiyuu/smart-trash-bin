@@ -41,7 +41,7 @@ export const Monitor = ({ device_name }: Props) => {
             <h1 className="text-3xl font-bold text-center mb-8">
                 Trash Bin Monitoring System
             </h1>
-            <Summary isOpen={is_open} trashLevel={trash_level} />
+            <Summary is_open={is_open} trash_level={trash_level} />
             <TrashLevelGraph data={trash_level_history} />
         </div>
     );

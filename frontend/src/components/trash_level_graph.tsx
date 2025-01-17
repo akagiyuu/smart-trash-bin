@@ -29,12 +29,6 @@ type Props = {
 };
 
 export const TrashLevelGraph = ({ data }: Props) => {
-    const chartConfig = {
-        time: {
-            label: 'Trash Level',
-        },
-    } satisfies ChartConfig;
-
     return (
         <Card className="w-full">
             <CardHeader>
@@ -43,7 +37,15 @@ export const TrashLevelGraph = ({ data }: Props) => {
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig} className="h-[400px]">
+                <ChartContainer
+                    config={{
+                        trash_level: {
+                            label: 'Trash Level',
+                            color: 'hsl(var(--chart-1))',
+                        },
+                    }}
+                    className="h-[400px]"
+                >
                     <LineChart data={data}>
                         <XAxis
                             dataKey="time"
@@ -53,32 +55,23 @@ export const TrashLevelGraph = ({ data }: Props) => {
                         />
                         <YAxis axisLine={false} tickLine={false} />
                         <ChartTooltip
-                            content={({ active, payload }) => {
-                                if (active && payload && payload.length) {
-                                    const data = payload[0].payload as Data;
-                                    return (
-                                        <ChartTooltipContent>
-                                            <div className="text-sm font-medium text-muted-foreground">
-                                                {formatTooltipDate(data.time)}
-                                            </div>
-                                            <div className="text-sm">
-                                                <span className="font-medium text-[var(--color-trashLevel)]">
-                                                    Trash Level:{' '}
-                                                </span>
-                                                {data.trash_level}%
-                                            </div>
-                                        </ChartTooltipContent>
-                                    );
-                                }
-                                return null;
-                            }}
+                            content={
+                                <ChartTooltipContent
+                                    labelFormatter={(_, payload) => {
+                                        return new Date(payload[0].payload.time)
+                                            .toString()
+                                            .slice(0, 24);
+                                    }}
+                                />
+                            }
+                            cursor={false}
+                            defaultIndex={1}
                         />
                         <Line
                             type="monotone"
                             dataKey="trash_level"
                             strokeWidth={2}
                             dot={false}
-                            activeDot={{ r: 8 }}
                         />
                     </LineChart>
                 </ChartContainer>

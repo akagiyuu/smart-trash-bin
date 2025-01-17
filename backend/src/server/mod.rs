@@ -4,33 +4,15 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use chrono::{DateTime, Utc};
 use doc::ApiDoc;
-use serde::{Deserialize, Serialize};
 use tower_http::trace::TraceLayer;
-use utoipa::{OpenApi, ToSchema};
+use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
 use crate::AppState;
 
 mod doc;
 mod handler;
-
-#[derive(Clone, Copy, Deserialize, Serialize, ToSchema, Debug)]
-#[serde(tag = "type", content = "data", rename_all = "snake_case")]
-pub enum DataKind {
-    Status(bool),
-    Moisture(f32),
-    TrashLevel(f32),
-}
-
-#[derive(Clone, Copy, Deserialize, Serialize, ToSchema, Debug)]
-pub struct Data {
-    pub time: DateTime<Utc>,
-
-    #[serde(flatten)]
-    pub kind: DataKind,
-}
 
 pub fn build(state: Arc<AppState>) -> Router {
     // register routes

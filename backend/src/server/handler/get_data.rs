@@ -13,15 +13,15 @@ use uuid::Uuid;
 
 async fn handle_socket(state: Arc<AppState>, device_id: Uuid, mut socket: WebSocket) {
     let mut receiver = state.sender.subscribe();
-    while let Ok((remote_device_id, data)) = receiver.recv().await {
+    while let Ok((remote_device_id, status)) = receiver.recv().await {
         if remote_device_id != device_id {
             continue;
         }
 
-        let json = match serde_json::to_string(&data) {
+        let json = match serde_json::to_string(&status) {
             Ok(v) => v,
             Err(error) => {
-                tracing::error!("Failed to serialize {:?} with error {}", data, error);
+                tracing::error!("Failed to serialize {:?} with error {}", status, error);
                 continue;
             }
         };
@@ -31,10 +31,7 @@ async fn handle_socket(state: Arc<AppState>, device_id: Uuid, mut socket: WebSoc
     }
 }
 
-#[utoipa::path(
-    get,
-    path = "/data/:device_name",
-)]
+#[utoipa::path(get, path = "/data/:device_name")]
 pub async fn get_data(
     State(state): State<Arc<AppState>>,
     Path(device_name): Path<String>,
@@ -48,6 +45,8 @@ pub async fn get_data(
                 anyhow!("No device with given name"),
             )
         })?;
+
+    tracing::info!("{:?}", device_id);
 
     Ok(ws.on_upgrade(move |socket| handle_socket(state, device_id, socket)))
 }

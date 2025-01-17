@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS statuses(
     device_id uuid,
 
     is_open boolean NOT NULL,
-    moisture real NOT NULL,
     trash_level real NOT NULL,
 
     PRIMARY KEY(time, device_id)

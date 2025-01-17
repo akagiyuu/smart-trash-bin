@@ -1,5 +1,7 @@
 use utoipa::{openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme}, Modify, OpenApi};
 
+use crate::database;
+
 use super::handler;
 
 struct SecurityAddon;
@@ -30,6 +32,6 @@ impl Modify for SecurityAddon {
         handler::register::register,
     ),
     modifiers(&SecurityAddon),
-    components(schemas(super::Data))
+    components(schemas(database::Status))
 )]
 pub struct ApiDoc;

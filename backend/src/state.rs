@@ -3,11 +3,11 @@ use sqlx::PgPool;
 use tokio::sync::broadcast;
 use uuid::Uuid;
 
-use crate::{server::Data, CONFIG};
+use crate::{database::Status, CONFIG};
 
 pub struct AppState {
     pub database: PgPool,
-    pub sender: broadcast::Sender<(Uuid, Data)>,
+    pub sender: broadcast::Sender<(Uuid, Status)>,
 }
 
 impl AppState {

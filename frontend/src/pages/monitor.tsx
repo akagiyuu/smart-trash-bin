@@ -1,6 +1,7 @@
 import { Summary } from '@/components/summary';
 import { Data, TrashLevelGraph } from '@/components/trash_level_graph';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import useWebSocket from 'react-use-websocket';
 
 type Status = {
@@ -9,14 +10,13 @@ type Status = {
     trash_level: number;
 };
 
-type Props = {
-    device_name: string;
-};
-
 const build_socket_url = (device_name: string) =>
     `ws://${import.meta.env.VITE_BACKEND_URL}/data/${device_name}`;
 
-export const Monitor = ({ device_name }: Props) => {
+export const Monitor = () => {
+    const params = useParams();
+    const device_name = params.device_name!;
+
     const [is_open, set_is_open] = useState(false);
     const [trash_level, set_trash_level] = useState(0);
     const [trash_level_history, set_trash_level_history] = useState<Data[]>([]);

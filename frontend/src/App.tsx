@@ -1,13 +1,25 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Monitor } from './pages/monitor';
 import { Device } from './pages/device';
+import { BrowserRouter, Route } from 'react-router';
+import { Routes } from 'react-router';
 
 const queryClient = new QueryClient();
 
 function App() {
     return (
         <QueryClientProvider client={queryClient}>
-            <Device/>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/">
+                        <Route index element={<Device />} />
+                        <Route
+                            path=":device_name"
+                            element={<Monitor />}
+                        />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
         </QueryClientProvider>
     );
 }

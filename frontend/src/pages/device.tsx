@@ -16,6 +16,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 export const Device = () => {
     const { isPending, error, data } = useQuery<string[]>({
@@ -28,6 +29,9 @@ export const Device = () => {
             return await response.json();
         },
     });
+    const [selected_device, set_selected_device] = useState<string | null>(
+        null,
+    );
 
     if (isPending) return 'Loading...';
 
@@ -36,41 +40,47 @@ export const Device = () => {
     if (data === undefined) return <div></div>;
 
     return (
-        <Card className="w-[350px]">
-            <CardHeader>
-                <CardTitle>Trash Bin Monitoring</CardTitle>
-                <CardDescription>Monitor a chosen trash bin</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        console.log(event.target)
-                        // window.location.replace('/');
-                    }}
-                >
-                    <div className="grid w-full items-center gap-4">
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="device">Trash bin</Label>
-                            <Select>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a trash bin" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {data.map((item) => (
-                                        <SelectItem key={item} value={item}>
-                                            {item}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+        <div className="flex justify-center items-center h-screen">
+            <Card className="w-full max-w-sm">
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold text-center">
+                        Trash Bin Monitoring
+                    </CardTitle>
+                    <CardDescription className="text-center">
+                        Monitor a chosen trash bin
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center space-x-4 mb-6">
+                        <Select
+                            value={selected_device || ''}
+                            onValueChange={(device) =>
+                                set_selected_device(device)
+                            }
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a device" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {data.map((item) => (
+                                    <SelectItem key={item} value={item}>
+                                        {item}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
-                </form>
-            </CardContent>
-            <CardFooter>
-                <Button className="m-auto">Monitor</Button>
-            </CardFooter>
-        </Card>
+                    <Button
+                        className="w-full"
+                        disabled={!selected_device}
+                        onClick={() =>
+                            window.location.replace(`/${selected_device}`)
+                        }
+                    >
+                        Connect Phone
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
     );
 };

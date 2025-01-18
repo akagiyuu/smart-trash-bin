@@ -1,5 +1,4 @@
 import {
-    ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
@@ -42,6 +41,7 @@ export const TrashLevelGraph = ({ data }: Props) => {
                             tickFormatter={formatDate}
                             axisLine={false}
                             tickLine={false}
+                            additive="sum"
                         />
                         <YAxis axisLine={false} tickLine={false} />
                         <ChartTooltip
@@ -62,6 +62,8 @@ export const TrashLevelGraph = ({ data }: Props) => {
                             dataKey="trash_level"
                             strokeWidth={2}
                             dot={false}
+                            isAnimationActive={false}
+                            additive="sum"
                         />
                     </LineChart>
                 </ChartContainer>

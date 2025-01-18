@@ -1,13 +1,11 @@
 import { Button } from '@/components/ui/button';
 import {
     Card,
-    CardFooter,
     CardDescription,
     CardContent,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -15,11 +13,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 export const Device = () => {
-    const { isPending, error, data } = useQuery<string[]>({
+    const { toast } = useToast();
+
+    const { error, data } = useQuery<string[]>({
         queryKey: ['device'],
         queryFn: async () => {
             const response = await fetch(
@@ -33,11 +34,16 @@ export const Device = () => {
         null,
     );
 
-    if (isPending) return 'Loading...';
+    if (error) {
+        toast({
+            title: 'Failed to get device list',
+            description: error.toString(),
+            variant: 'destructive',
+        });
+        return;
+    }
 
-    if (error) return 'An error has occurred: ' + error.message;
-
-    if (data === undefined) return <div></div>;
+    if (data === undefined) return;
 
     return (
         <div className="flex justify-center items-center h-screen">
@@ -77,7 +83,7 @@ export const Device = () => {
                             window.location.replace(`/${selected_device}`)
                         }
                     >
-                        Connect Phone
+                        Monitor
                     </Button>
                 </CardContent>
             </Card>

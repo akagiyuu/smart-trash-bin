@@ -3,6 +3,7 @@ import { Monitor } from './pages/monitor';
 import { Device } from './pages/device';
 import { BrowserRouter, Route } from 'react-router';
 import { Routes } from 'react-router';
+import { Toaster } from '@/components/ui/toaster';
 
 const queryClient = new QueryClient();
 
@@ -13,13 +14,11 @@ function App() {
                 <Routes>
                     <Route path="/">
                         <Route index element={<Device />} />
-                        <Route
-                            path=":device_name"
-                            element={<Monitor />}
-                        />
+                        <Route path=":device_name" element={<Monitor />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
+            <Toaster />
         </QueryClientProvider>
     );
 }

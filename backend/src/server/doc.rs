@@ -30,6 +30,9 @@ impl Modify for SecurityAddon {
         handler::register::register,
     ),
     modifiers(&SecurityAddon),
-    components(schemas(database::Status))
+    components(schemas(
+        database::Status,
+        handler::register::RegisterData
+    ))
 )]
 pub struct ApiDoc;

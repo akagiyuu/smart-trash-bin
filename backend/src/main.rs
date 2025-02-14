@@ -36,6 +36,8 @@ async fn main() -> anyhow::Result<()> {
     let addr = SocketAddr::from(([127, 0, 0, 1], CONFIG.port));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
 
+    tracing::info!("Started at {}", CONFIG.port);
+
     axum::serve(listener, app).await?;
 
     Ok(())

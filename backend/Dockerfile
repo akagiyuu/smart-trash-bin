@@ -1,16 +1,30 @@
-# Use a Rust base image with Cargo installed
-FROM rust:latest AS builder
+FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
+WORKDIR /app
 
-WORKDIR /usr/src/app
+FROM chef AS planner
+COPY Cargo.toml Cargo.lock ./
+COPY src/ ./src
+COPY .sqlx/ ./.sqlx
+RUN cargo chef prepare --recipe-path recipe.json
 
-COPY ./Cargo.toml ./Cargo.lock ./
+FROM chef AS builder 
+COPY --from=planner /app/recipe.json recipe.json
+# Build dependencies - this is the caching Docker layer!
+RUN cargo chef cook --release --recipe-path recipe.json
+# Build application
+COPY Cargo.toml Cargo.lock ./
+COPY src/ ./src
+COPY .sqlx/ ./.sqlx
+RUN cargo build --release 
 
-RUN cargo build --release
+FROM debian:bookworm
 
-FROM debian:buster-slim
+RUN apt-get update \
+    && apt-get install libssl3 -y \
+    && apt-get clean
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY --from=builder /usr/src/app/target/release/backend .
+COPY --from=builder /app/target/release/backend .
 
 CMD ["./backend"]

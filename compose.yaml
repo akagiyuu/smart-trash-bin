@@ -13,8 +13,10 @@ services:
       - backend
   backend: 
     build: 
-      context: .
-      dockerfile: ./backend/Dockerfile
+      context: ./backend
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
     environment:
       DATABASE_URL: "postgres://${PG_USER}:${PG_PASSWORD}@database/${PG_DB}"
       SENDER_EMAIL: ${SENDER_EMAIL}

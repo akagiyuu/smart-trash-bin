@@ -50,7 +50,6 @@ pub struct Config {
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {
     ::config::Config::builder()
-        .add_source(config::File::with_name("config"))
         .add_source(config::Environment::default())
         .build()
         .unwrap()

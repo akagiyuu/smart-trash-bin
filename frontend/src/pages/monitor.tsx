@@ -12,21 +12,17 @@ type Status = {
     trash_level: number;
 };
 
-const build_socket_url = (device_id: string) =>
-    `ws://${import.meta.env.VITE_BACKEND_URL}/data/${device_id}`;
-
-const build_get_name_url = (device_id: string) =>
-    `http://${import.meta.env.VITE_BACKEND_URL}/name/${device_id}`;
-
 export const Monitor = () => {
     const { toast } = useToast();
     const params = useParams();
     const device_id = params.device_id!;
 
     const { data: name, error } = useQuery<string>({
-        queryKey: ['device_name', device_id],
+        queryKey: ['name', device_id],
         queryFn: async () => {
-            const response = await fetch(build_get_name_url(device_id));
+            const response = await fetch(
+                `http://${import.meta.env.VITE_BACKEND_URL}/device/${device_id}/name`,
+            );
 
             return await response.text();
         },
@@ -37,7 +33,7 @@ export const Monitor = () => {
     const [trash_level_history, set_trash_level_history] = useState<Data[]>([]);
 
     const { lastJsonMessage: status } = useWebSocket<Status>(
-        build_socket_url(device_id),
+        `ws://${import.meta.env.VITE_BACKEND_URL}/device/${device_id}/data`,
     );
 
     useEffect(() => {
@@ -60,7 +56,7 @@ export const Monitor = () => {
         return;
     }
 
-    if(name === undefined) return;
+    if (name === undefined) return;
 
     return (
         <div className="w-full max-w-4xl mx-auto space-y-6 p-6">

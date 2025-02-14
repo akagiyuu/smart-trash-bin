@@ -33,7 +33,7 @@ async fn main() -> anyhow::Result<()> {
     let state = Arc::new(AppState::new().await?);
     let app = server::build(state);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], CONFIG.port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], CONFIG.port));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
 
     tracing::info!("Started at {}", CONFIG.port);

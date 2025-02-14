@@ -14,7 +14,7 @@ function App() {
                 <Routes>
                     <Route path="/">
                         <Route index element={<Device />} />
-                        <Route path=":device_name" element={<Monitor />} />
+                        <Route path=":device_id" element={<Monitor />} />
                     </Route>
                 </Routes>
             </BrowserRouter>

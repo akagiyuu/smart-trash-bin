@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS devices(
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    id uuid PRIMARY KEY,
     name text NOT NULL UNIQUE
 );
 

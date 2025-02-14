@@ -28,6 +28,8 @@ impl Modify for SecurityAddon {
         handler::get_data::get_data,
         handler::post_data::post_data,
         handler::register::register,
+        handler::name::get_name,
+        handler::name::post_name,
     ),
     modifiers(&SecurityAddon),
     components(schemas(database::Status))

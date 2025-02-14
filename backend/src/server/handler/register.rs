@@ -1,3 +1,4 @@
+use std::str::FromStr;
 use std::sync::Arc;
 
 use axum::extract::State;
@@ -10,10 +11,14 @@ use crate::{AppState, Result};
 #[utoipa::path(
     post,
     path = "/register",
-    request_body = String,
+    request_body = Uuid,
 )]
-pub async fn register(State(state): State<Arc<AppState>>, name: String) -> Result<Json<Uuid>> {
-    let device_id = Device::register(name, &state.database)
+pub async fn register(
+    State(state): State<Arc<AppState>>,
+    id: String,
+) -> Result<Json<Uuid>> {
+    let id = Uuid::from_str(&id).map_err(anyhow::Error::from)?;
+    let device_id = Device::register(id, &state.database)
         .await
         .map_err(anyhow::Error::from)?;
 

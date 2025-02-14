@@ -17,10 +17,15 @@ import { useToast } from '@/hooks/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
+type Device = {
+    id: string,
+    name: string
+}
+
 export const Device = () => {
     const { toast } = useToast();
 
-    const { error, data } = useQuery<string[]>({
+    const { error, data } = useQuery<Device[]>({
         queryKey: ['device'],
         queryFn: async () => {
             const response = await fetch(
@@ -69,8 +74,8 @@ export const Device = () => {
                             </SelectTrigger>
                             <SelectContent>
                                 {data.map((item) => (
-                                    <SelectItem key={item} value={item}>
-                                        {item}
+                                    <SelectItem key={item.id} value={item.id}>
+                                        {item.name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>

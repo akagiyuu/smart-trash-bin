@@ -18,6 +18,10 @@ fn default_local_cors_domain() -> String {
     "http://localhost:5173".to_string()
 }
 
+fn default_trash_level_threshold() -> f32 {
+    80.0
+}
+
 #[derive(Deserialize)]
 pub struct Config {
     #[serde(default = "default_public_cors_domain")]
@@ -38,11 +42,15 @@ pub struct Config {
 
     pub sender_password: String,
 
-    pub receiver_emaill: String,
+    pub receiver_email: String,
+
+    #[serde(default = "default_trash_level_threshold")]
+    pub trash_level_threshold: f32,
 }
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {
     ::config::Config::builder()
+        .add_source(config::File::with_name("config"))
         .add_source(config::Environment::default())
         .build()
         .unwrap()

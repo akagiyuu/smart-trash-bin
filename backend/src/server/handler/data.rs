@@ -10,8 +10,8 @@ use axum::{
 };
 use uuid::Uuid;
 
-use crate::database::Status;
-use crate::{AppState, Result};
+use crate::database::{Device, Status};
+use crate::{util, AppState, Result, CONFIG};
 
 async fn handle_socket(state: Arc<AppState>, device_id: Uuid, mut socket: WebSocket) {
     let mut receiver = state.sender.subscribe();
@@ -53,6 +53,18 @@ pub async fn post_data(
     Json(status): Json<Status>,
 ) -> Result<()> {
     let _ = state.sender.send((device_id, status));
+
+    if status.trash_level > CONFIG.trash_level_threshold {
+        util::send_email(
+            format!(
+                "Device {} exceed trash level threshold",
+                Device::get_name(device_id, &state.database)
+                    .await
+                    .map_err(anyhow::Error::from)?
+            ),
+            format!("Current trash level: {}%", status.trash_level),
+        )?;
+    }
 
     status
         .insert(device_id, &state.database)

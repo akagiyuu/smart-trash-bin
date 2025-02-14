@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::{AppState, Result};
+use axum::Json;
 use axum::{
     extract::{
         ws::{Message, WebSocket},
@@ -9,6 +9,9 @@ use axum::{
     response::IntoResponse,
 };
 use uuid::Uuid;
+
+use crate::database::Status;
+use crate::{AppState, Result};
 
 async fn handle_socket(state: Arc<AppState>, device_id: Uuid, mut socket: WebSocket) {
     let mut receiver = state.sender.subscribe();
@@ -30,11 +33,31 @@ async fn handle_socket(state: Arc<AppState>, device_id: Uuid, mut socket: WebSoc
     }
 }
 
-#[utoipa::path(get, path = "/data/:device_id")]
+#[utoipa::path(get, path = "/device/:device_id/data")]
 pub async fn get_data(
     State(state): State<Arc<AppState>>,
     Path(device_id): Path<Uuid>,
     ws: WebSocketUpgrade,
 ) -> Result<impl IntoResponse> {
     Ok(ws.on_upgrade(move |socket| handle_socket(state, device_id, socket)))
+}
+
+#[utoipa::path(
+    post,
+    path = "/device/:device_id/name",
+    request_body = Status,
+)]
+pub async fn post_data(
+    State(state): State<Arc<AppState>>,
+    Path(device_id): Path<Uuid>,
+    Json(status): Json<Status>,
+) -> Result<()> {
+    let _ = state.sender.send((device_id, status));
+
+    status
+        .insert(device_id, &state.database)
+        .await
+        .map_err(anyhow::Error::from)?;
+
+    Ok(())
 }

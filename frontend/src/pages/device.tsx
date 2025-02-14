@@ -7,14 +7,22 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from '@/components/ui/command';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -37,9 +45,10 @@ export const Device = () => {
             return await response.json();
         },
     });
-    const [selected_device, set_selected_device] = useState<string | null>(
+    const [selected_device, set_selected_device] = useState<Device | null>(
         null,
     );
+    const [open, setOpen] = useState(false);
 
     if (error) {
         toast({
@@ -65,28 +74,60 @@ export const Device = () => {
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center space-x-4 mb-6">
-                        <Select
-                            value={selected_device || ''}
-                            onValueChange={(device) =>
-                                set_selected_device(device)
-                            }
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a device" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {data.map((item) => (
-                                    <SelectItem key={item.id} value={item.id}>
-                                        {item.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={open}
+                                    className="w-full justify-between"
+                                >
+                                    {selected_device
+                                        ? selected_device.name
+                                        : 'Select phone...'}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                                <Command>
+                                    <CommandInput placeholder="Search phone..." />
+                                    <CommandList>
+                                        <CommandEmpty>
+                                            No phone found.
+                                        </CommandEmpty>
+                                        <CommandGroup>
+                                            {data.map((device) => (
+                                                <CommandItem
+                                                    key={device.id}
+                                                    onSelect={() => {
+                                                        set_selected_device(
+                                                            device,
+                                                        );
+                                                        setOpen(false);
+                                                    }}
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            'mr-2 h-4 w-4',
+                                                            selected_device?.id ===
+                                                                device.id
+                                                                ? 'opacity-100'
+                                                                : 'opacity-0',
+                                                        )}
+                                                    />
+                                                    {device.name}
+                                                </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
                     </div>
                     <Button
                         className="w-full"
                         disabled={!selected_device}
-                        onClick={() => navigate(`/${selected_device}`)}
+                        onClick={() => navigate(`/${selected_device?.id}`)}
                     >
                         Monitor
                     </Button>

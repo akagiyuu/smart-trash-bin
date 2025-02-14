@@ -10,7 +10,7 @@ use crate::{AppState, Result};
 
 #[utoipa::path(
     post,
-    path = "/register",
+    path = "/device/register",
     request_body = Uuid,
 )]
 pub async fn register(

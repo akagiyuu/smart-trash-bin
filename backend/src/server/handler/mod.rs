@@ -1,7 +1,6 @@
-pub mod device;
-pub mod get_data;
+pub mod data;
+pub mod list;
 pub mod name;
-pub mod post_data;
 pub mod register;
 
 #[utoipa::path(

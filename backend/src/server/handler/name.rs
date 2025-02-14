@@ -6,7 +6,7 @@ use uuid::Uuid;
 use crate::database::Device;
 use crate::{AppState, Result};
 
-#[utoipa::path(get, path = "/name/:device_id")]
+#[utoipa::path(get, path = "/device/:device_id/name")]
 pub async fn get_name(
     State(state): State<Arc<AppState>>,
     Path(device_id): Path<Uuid>,
@@ -18,7 +18,7 @@ pub async fn get_name(
     Ok(device_name)
 }
 
-#[utoipa::path(post, path = "/name/:device_id", request_body = String)]
+#[utoipa::path(post, path = "/device/:device_id/name", request_body = String)]
 pub async fn post_name(
     State(state): State<Arc<AppState>>,
     Path(device_id): Path<Uuid>,

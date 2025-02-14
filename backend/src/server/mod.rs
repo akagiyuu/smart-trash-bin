@@ -41,12 +41,12 @@ pub fn build(state: Arc<AppState>) -> Router {
     // register routes
     let router = Router::new()
         .route("/", get(handler::ping))
-        .route("/device", get(handler::device::device))
-        .route("/data/{device_id}", get(handler::get_data::get_data))
-        .route("/data", post(handler::post_data::post_data))
-        .route("/register", post(handler::register::register))
-        .route("/name/{device_id}", get(handler::name::get_name))
-        .route("/name/{device_id}", post(handler::name::post_name));
+        .route("/device/register", post(handler::register::register))
+        .route("/device/list", get(handler::list::list))
+        .route("/device/{device_id}/data", get(handler::data::get_data))
+        .route("/device/{device_id}/data", post(handler::data::post_data))
+        .route("/device/{device_id}/name", get(handler::name::get_name))
+        .route("/device/{device_id}/name", post(handler::name::post_name));
 
     let router = router.layer(
         CorsLayer::new()

@@ -26,10 +26,10 @@ export const Device = () => {
     const { toast } = useToast();
 
     const { error, data } = useQuery<Device[]>({
-        queryKey: ['device'],
+        queryKey: ['list'],
         queryFn: async () => {
             const response = await fetch(
-                `http://${import.meta.env.VITE_BACKEND_URL}/device`,
+                `http://${import.meta.env.VITE_BACKEND_URL}/device/list`,
             );
 
             return await response.json();

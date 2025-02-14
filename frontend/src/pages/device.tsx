@@ -16,14 +16,16 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 type Device = {
-    id: string,
-    name: string
-}
+    id: string;
+    name: string;
+};
 
 export const Device = () => {
     const { toast } = useToast();
+    const navigate = useNavigate();
 
     const { error, data } = useQuery<Device[]>({
         queryKey: ['list'],
@@ -84,9 +86,7 @@ export const Device = () => {
                     <Button
                         className="w-full"
                         disabled={!selected_device}
-                        onClick={() =>
-                            window.location.replace(`/${selected_device}`)
-                        }
+                        onClick={() => navigate(`/${selected_device}`)}
                     >
                         Monitor
                     </Button>

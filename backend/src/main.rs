@@ -8,6 +8,7 @@ pub mod database;
 pub mod error;
 pub mod server;
 pub mod state;
+pub mod util;
 
 pub use config::*;
 pub use error::*;

@@ -1,0 +1,32 @@
+services:
+  database:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    volumes:
+      - db:/data/postgres
+    restart: unless-stopped
+    networks: 
+      - backend
+  backend: 
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
+    environment:
+      DATABASE_URL: "postgres://${PG_USER}:${PG_PASSWORD}@database/${PG_DB}"
+      SENDER_EMAIL: ${SENDER_EMAIL}
+      SENDER_PASSWORD: ${SENDER_PASSWORD}
+      RECEIVER_EMAIL: ${RECEIVER_EMAIL}
+    image: sus
+    networks: 
+      - backend
+
+networks:
+  backend:
+    name: 'sus'
+
+volumes:
+  db:

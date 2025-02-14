@@ -42,7 +42,7 @@ pub fn build(state: Arc<AppState>) -> Router {
     let router = Router::new()
         .route("/", get(handler::ping))
         .route("/device", get(handler::device::device))
-        .route("/data/{device_id}", get(handler::get_data::get_data))
+        .route("/data/{device_name}", get(handler::get_data::get_data))
         .route("/data", post(handler::post_data::post_data))
         .route("/register", post(handler::register::register));
 

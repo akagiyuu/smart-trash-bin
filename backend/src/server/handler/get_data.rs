@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
-use crate::AppState;
+use crate::{database::Device, AppState, Error, Result};
+use anyhow::anyhow;
 use axum::{
     extract::{
         ws::{Message, WebSocket},
@@ -30,11 +31,22 @@ async fn handle_socket(state: Arc<AppState>, device_id: Uuid, mut socket: WebSoc
     }
 }
 
-#[utoipa::path(get, path = "/data/:device_id")]
+#[utoipa::path(get, path = "/data/:device_name")]
 pub async fn get_data(
     State(state): State<Arc<AppState>>,
-    Path(device_id): Path<Uuid>,
+    Path(device_name): Path<String>,
     ws: WebSocketUpgrade,
-) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| handle_socket(state, device_id, socket))
+) -> Result<impl IntoResponse> {
+    let device_id = Device::get_token(device_name, &state.database)
+        .await
+        .map_err(|_| {
+            Error::bad_request(
+                "No device with given name",
+                anyhow!("No device with given name"),
+            )
+        })?;
+
+    tracing::info!("{:?}", device_id);
+
+    Ok(ws.on_upgrade(move |socket| handle_socket(state, device_id, socket)))
 }

@@ -64,7 +64,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.leaflet-popup-content {
-    margin: 0
-}

@@ -1,8 +1,6 @@
 CREATE TABLE IF NOT EXISTS devices(
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name text NOT NULL UNIQUE,
-    latitude real NOT NULL,
-    longitude real NOT NULL
+    name text NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS statuses(

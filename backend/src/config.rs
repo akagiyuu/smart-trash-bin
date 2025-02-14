@@ -33,6 +33,12 @@ pub struct Config {
 
     #[serde(default = "default_broadcast_channel_count")]
     pub broadcast_channel_count: usize,
+
+    pub sender_email: String,
+
+    pub sender_password: String,
+
+    pub receiver_emaill: String,
 }
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {

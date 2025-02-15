@@ -19,6 +19,10 @@ RUN cargo build --release
 
 FROM debian:bookworm
 
+RUN apt-get update \
+    && apt-get install libssl3 -y \
+    && apt-get clean
+
 WORKDIR /app
 
 COPY --from=builder /app/target/release/backend .

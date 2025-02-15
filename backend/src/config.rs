@@ -22,7 +22,7 @@ fn default_trash_level_threshold() -> f32 {
     80.0
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Config {
     #[serde(default = "default_public_cors_domain")]
     pub public_cors_domain: String,

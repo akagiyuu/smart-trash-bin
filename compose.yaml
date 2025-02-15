@@ -32,7 +32,18 @@ services:
       SENDER_EMAIL: ${SENDER_EMAIL}
       SENDER_PASSWORD: ${SENDER_PASSWORD}
       RECEIVER_EMAIL: ${RECEIVER_EMAIL}
-    image: sus
+    image: backend-sus
+    networks:
+      - backend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+      args:
+        - VITE_BACKEND_URL=localhost:3000
+    ports:
+      - 5173:80
+    image: frontend-sus
     networks:
       - backend
 

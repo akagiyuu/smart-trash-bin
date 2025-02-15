@@ -12,8 +12,7 @@ pub fn send_email(subject: String, body: String) -> Result<()> {
         CONFIG.sender_password.to_owned(),
     );
 
-    let mailer = SmtpTransport::relay("smtp.gmail.com")
-        .unwrap()
+    let mailer = SmtpTransport::relay("smtp.gmail.com")?
         .credentials(creds)
         .build();
 
@@ -22,8 +21,7 @@ pub fn send_email(subject: String, body: String) -> Result<()> {
         .to(CONFIG.receiver_email.parse().unwrap())
         .subject(subject)
         .header(ContentType::TEXT_PLAIN)
-        .body(body)
-        .unwrap();
+        .body(body)?;
 
     mailer.send(&email)?;
 

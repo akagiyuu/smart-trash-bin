@@ -1,0 +1,55 @@
+services:
+  database:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    volumes:
+      - db:/data/postgres
+    restart: unless-stopped
+    networks:
+      - backend
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - 5050:80
+    networks:
+      - backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      DATABASE_URL: "postgres://${PG_USER}:${PG_PASSWORD}@database/${PG_DB}"
+      SENDER_EMAIL: ${SENDER_EMAIL}
+      SENDER_PASSWORD: ${SENDER_PASSWORD}
+      RECEIVER_EMAIL: ${RECEIVER_EMAIL}
+    image: backend-sus
+    networks:
+      - backend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+      args:
+        - VITE_BACKEND_URL=localhost:3000
+    ports:
+      - 5173:80
+    image: frontend-sus
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: "sus"
+
+volumes:
+  db:

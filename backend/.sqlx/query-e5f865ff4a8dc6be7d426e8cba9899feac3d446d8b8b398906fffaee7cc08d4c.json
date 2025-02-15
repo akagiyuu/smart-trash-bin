@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                INSERT INTO statuses(device_id, time, is_open, trash_level)\n                VALUES($1, $2, $3, $4)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Timestamptz",
+        "Bool",
+        "Float4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "e5f865ff4a8dc6be7d426e8cba9899feac3d446d8b8b398906fffaee7cc08d4c"
+}

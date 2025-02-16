@@ -15,6 +15,9 @@ use super::handler;
         handler::name::get_name,
         handler::name::post_name,
     ),
-    components(schemas(database::Status))
+    components(schemas(
+        database::Status,
+        handler::data::Data
+    ))
 )]
 pub struct ApiDoc;

@@ -8,6 +8,9 @@ use axum::{
     },
     response::IntoResponse,
 };
+use chrono::Utc;
+use serde::Deserialize;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 use crate::database::{Device, Status};
@@ -42,19 +45,31 @@ pub async fn get_data(
     Ok(ws.on_upgrade(move |socket| handle_socket(state, device_id, socket)))
 }
 
+#[derive(ToSchema, Deserialize)]
+pub struct Data {
+    pub is_open: bool,
+    pub trash_level: f32,
+}
+
 #[utoipa::path(
     post,
-    path = "/device/:device_id/name",
+    path = "/device/:device_id/data",
     request_body = Status,
 )]
 pub async fn post_data(
     State(state): State<Arc<AppState>>,
     Path(device_id): Path<Uuid>,
-    Json(status): Json<Status>,
+    Json(data): Json<Data>,
 ) -> Result<()> {
+    let status = Status {
+        time: Utc::now(),
+        is_open: data.is_open,
+        trash_level: data.trash_level,
+    };
+
     let _ = state.sender.send((device_id, status));
 
-    if status.trash_level > CONFIG.trash_level_threshold {
+    if data.trash_level > CONFIG.trash_level_threshold {
         util::send_email(
             format!(
                 "Device {} exceed trash level threshold",
@@ -62,7 +77,7 @@ pub async fn post_data(
                     .await
                     .map_err(anyhow::Error::from)?
             ),
-            format!("Current trash level: {}%", status.trash_level),
+            format!("Current trash level: {}%", data.trash_level),
         )?;
     }
 

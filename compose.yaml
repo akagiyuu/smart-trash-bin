@@ -40,7 +40,8 @@ services:
       context: ./frontend
       dockerfile: ./Dockerfile
       args:
-        - VITE_BACKEND_URL=localhost:3000
+        - VITE_API_URL=${VITE_API_URL}
+        - VITE_WS_URL=${VITE_WS_URL}
     ports:
       - 5173:80
     image: frontend-sus

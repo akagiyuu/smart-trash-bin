@@ -39,7 +39,7 @@ export const Device = () => {
         queryKey: ['list'],
         queryFn: async () => {
             const response = await fetch(
-                `${__API_URL__}/device/list`,
+                `${import.meta.env.VITE_API_URL}/device/list`,
             );
 
             return await response.json();

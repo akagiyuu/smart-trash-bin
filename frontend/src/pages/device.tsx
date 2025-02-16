@@ -84,16 +84,16 @@ export const Device = () => {
                                 >
                                     {selected_device
                                         ? selected_device.name
-                                        : 'Select phone...'}
+                                        : 'Select trash bin...'}
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-full p-0">
                                 <Command>
-                                    <CommandInput placeholder="Search phone..." />
+                                    <CommandInput placeholder="Search trash bin..." />
                                     <CommandList>
                                         <CommandEmpty>
-                                            No phone found.
+                                            No trash bin found.
                                         </CommandEmpty>
                                         <CommandGroup>
                                             {data.map((device) => (

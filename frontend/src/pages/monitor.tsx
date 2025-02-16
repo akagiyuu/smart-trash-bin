@@ -21,7 +21,7 @@ export const Monitor = () => {
         queryKey: ['name', device_id],
         queryFn: async () => {
             const response = await fetch(
-                `http://${import.meta.env.VITE_BACKEND_URL}/device/${device_id}/name`,
+                `${__API_URL__}/device/${device_id}/name`,
             );
 
             return await response.text();
@@ -33,7 +33,7 @@ export const Monitor = () => {
     const [trash_level_history, set_trash_level_history] = useState<Data[]>([]);
 
     const { lastJsonMessage: status } = useWebSocket<Status>(
-        `ws://${import.meta.env.VITE_BACKEND_URL}/device/${device_id}/data`,
+        `${__WS_URL__}/device/${device_id}/data`,
     );
 
     useEffect(() => {

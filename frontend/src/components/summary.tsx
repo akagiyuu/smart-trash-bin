@@ -24,7 +24,7 @@ export const Summary = ({
         setIsEditing(false);
 
         await fetch(
-            `http://${import.meta.env.VITE_BACKEND_URL}/device/${device_id}/name`,
+            `${__API_URL__}/device/${device_id}/name`,
             {
                 method: 'POST',
                 body: name,

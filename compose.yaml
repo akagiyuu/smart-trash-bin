@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: postgres
+    container_name: trashcan-postgres
     image: postgres
     environment:
       POSTGRES_USER: ${PG_USER}
@@ -22,6 +22,7 @@ services:
     networks:
       - backend
   backend:
+    container_name: trashcan-backend
     build:
       context: ./backend
       dockerfile: ./Dockerfile
@@ -30,18 +31,21 @@ services:
     environment:
       DATABASE_URL: "postgres://${PG_USER}:${PG_PASSWORD}@database/${PG_DB}"
       SENDER_EMAIL: ${SENDER_EMAIL}
+      PUBLIC_CORS_DOMAIN: https://trashcan-client.${HOST_NAME}
       SENDER_PASSWORD: ${SENDER_PASSWORD}
       RECEIVER_EMAIL: ${RECEIVER_EMAIL}
     image: backend-sus
     networks:
       - backend
   frontend:
+    container_name: trashcan-frontend
+    restart: always
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
       args:
-        - VITE_API_URL=${VITE_API_URL}
-        - VITE_WS_URL=${VITE_WS_URL}
+        - VITE_API_URL=https://trashcan-api.${HOST_NAME}
+        - VITE_WS_URL=wss://trashcan-api.${HOST_NAME}
     ports:
       - 5173:80
     image: frontend-sus
@@ -50,7 +54,8 @@ services:
 
 networks:
   backend:
-    name: "sus"
+    name: "trashcan_application_networks"
 
 volumes:
   db:
+    name: "trashcan-database"

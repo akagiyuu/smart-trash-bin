@@ -1,9 +1,11 @@
 import { Summary } from '@/components/summary';
 import { Data, TrashLevelGraph } from '@/components/trash_level_graph';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery } from '@tanstack/react-query';
+import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import useWebSocket from 'react-use-websocket';
 
 type Status = {
@@ -60,9 +62,12 @@ export const Monitor = () => {
 
     return (
         <div className="w-full max-w-4xl mx-auto space-y-6 p-6">
-            <h1 className="text-3xl font-bold text-center mb-8">
-                Trash Bin Monitoring System
-            </h1>
+            <Link to="/">
+                <Button variant="outline" className="flex items-center gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Main Page
+                </Button>
+            </Link>
             <Summary
                 device_id={device_id}
                 is_open={is_open}

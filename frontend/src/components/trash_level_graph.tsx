@@ -33,7 +33,7 @@ export const TrashLevelGraph = ({ data }: Props) => {
                             color: 'hsl(var(--chart-1))',
                         },
                     }}
-                    className="h-[400px]"
+                    className="max-h-screen"
                 >
                     <LineChart data={data}>
                         <XAxis

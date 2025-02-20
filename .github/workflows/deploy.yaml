@@ -20,6 +20,7 @@ jobs:
           build-args: |
             VITE_API_URL=https://trashcan-api.${{ secrets.HOST_NAME }}
             VITE_WS_URL=wss://trashcan-api.${{ secrets.HOST_NAME }}
+            VITE_TRASH_LEVEL_THRESHOLD=$VITE_TRASH_LEVEL_THRESHOLD
           push: true
           tags: akagiyuu/smart-trash-bin-frontend:latest
 
@@ -43,6 +44,17 @@ jobs:
     name: Deploy
     runs-on: smart-trashcan
     needs: [build-frontend, build-backend]
+    env:
+      POSTGRES_USER: ${{ secret.PG_USER }}
+      POSTGRES_PASSWORD: ${{ secret.PG_PASSWORD }}
+      POSTGRES_DB: ${{ secret.PG_DB }}
+      PGADMIN_DEFAULT_EMAIL: ${{ secret.PGADMIN_DEFAULT_EMAIL }}
+      PGADMIN_DEFAULT_PASSWORD: ${{ secret.PGADMIN_DEFAULT_PASSWORD }}
+      DATABASE_URL: "postgres://${{ secret.PG_USER }}:${{ secret.PG_PASSWORD }}@database/${{ secret.PG_DB }}"
+      SENDER_EMAIL: ${{ secret.SENDER_EMAIL }}
+      PUBLIC_CORS_DOMAIN: https://trashcan-client.${{ secret.HOST_NAME }}
+      SENDER_PASSWORD: ${{ secret.SENDER_PASSWORD }}
+      RECEIVER_EMAIL: ${{ secret.RECEIVER_EMAIL }}
     steps:
     - name: Checkout Develop
       uses: actions/checkout@v3
@@ -54,4 +66,4 @@ jobs:
       run: docker compose down --rmi all -v
 
     - name: Deploy Socket
-      run: docker compose --env-file=.env up -d
+      run: docker compose up -d

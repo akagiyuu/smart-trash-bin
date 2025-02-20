@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: trashcan-postgres
+    container_name: trash-bin-postgres
     image: postgres
     environment:
       POSTGRES_USER: ${PG_USER}
@@ -12,7 +12,7 @@ services:
     networks:
       - backend
   pgadmin:
-    container_name: pgadmin
+    container_name: trash-bin-pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
@@ -22,7 +22,7 @@ services:
     networks:
       - backend
   backend:
-    container_name: trashcan-backend
+    container_name: trash-bin-backend
     build:
       context: ./backend
       dockerfile: ./Dockerfile
@@ -38,7 +38,7 @@ services:
     networks:
       - backend
   frontend:
-    container_name: trashcan-frontend
+    container_name: trash-bin-frontend
     restart: always
     build:
       context: ./frontend
@@ -55,7 +55,9 @@ services:
 networks:
   backend:
     name: "trashcan_application_networks"
+    external: true
 
 volumes:
   db:
     name: "trashcan-database"
+    external: true

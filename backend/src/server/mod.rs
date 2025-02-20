@@ -6,17 +6,17 @@ use axum::{
             ACCEPT, ACCESS_CONTROL_ALLOW_HEADERS, ACCESS_CONTROL_ALLOW_METHODS,
             ACCESS_CONTROL_ALLOW_ORIGIN, AUTHORIZATION, CONTENT_TYPE, ORIGIN,
         },
-        HeaderName, HeaderValue, Method,
+        HeaderName, Method,
     },
     routing::{get, post},
     Router,
 };
 use doc::ApiDoc;
-use tower_http::{cors::CorsLayer, trace::TraceLayer};
+use tower_http::{cors::{Any, CorsLayer}, trace::TraceLayer};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::{AppState, CONFIG};
+use crate::AppState;
 
 mod doc;
 mod handler;
@@ -33,11 +33,6 @@ const ALLOW_HEADERS: [HeaderName; 7] = [
 const ALLOW_METHODS: [Method; 2] = [Method::GET, Method::POST];
 
 pub fn build(state: Arc<AppState>) -> Router {
-    let allow_origins = [
-        CONFIG.public_cors_domain.parse::<HeaderValue>().unwrap(),
-        CONFIG.local_cors_domain.parse::<HeaderValue>().unwrap(),
-    ];
-
     // register routes
     let router = Router::new()
         .route("/", get(handler::ping))
@@ -50,10 +45,9 @@ pub fn build(state: Arc<AppState>) -> Router {
 
     let router = router.layer(
         CorsLayer::new()
-            .allow_origin(allow_origins)
+            .allow_origin(Any)
             .allow_headers(ALLOW_HEADERS)
             .expose_headers(ALLOW_HEADERS)
-            .allow_credentials(true)
             .allow_methods(ALLOW_METHODS),
     );
 

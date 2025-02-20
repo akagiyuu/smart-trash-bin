@@ -45,16 +45,16 @@ jobs:
     runs-on: smart-trashcan
     needs: [build-frontend, build-backend]
     env:
-      POSTGRES_USER: ${{ secret.PG_USER }}
-      POSTGRES_PASSWORD: ${{ secret.PG_PASSWORD }}
-      POSTGRES_DB: ${{ secret.PG_DB }}
-      PGADMIN_DEFAULT_EMAIL: ${{ secret.PGADMIN_DEFAULT_EMAIL }}
-      PGADMIN_DEFAULT_PASSWORD: ${{ secret.PGADMIN_DEFAULT_PASSWORD }}
-      DATABASE_URL: "postgres://${{ secret.PG_USER }}:${{ secret.PG_PASSWORD }}@database/${{ secret.PG_DB }}"
-      SENDER_EMAIL: ${{ secret.SENDER_EMAIL }}
-      PUBLIC_CORS_DOMAIN: https://trashcan-client.${{ secret.HOST_NAME }}
-      SENDER_PASSWORD: ${{ secret.SENDER_PASSWORD }}
-      RECEIVER_EMAIL: ${{ secret.RECEIVER_EMAIL }}
+      POSTGRES_USER: ${{ secrets.PG_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.PG_DB }}
+      PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL }}
+      PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
+      DATABASE_URL: "postgres://${{ secrets.PG_USER }}:${{ secrets.PG_PASSWORD }}@database/${{ secrets.PG_DB }}"
+      SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+      PUBLIC_CORS_DOMAIN: https://trashcan-client.${{ secrets.HOST_NAME }}
+      SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+      RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
     steps:
     - name: Checkout Develop
       uses: actions/checkout@v3

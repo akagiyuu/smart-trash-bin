@@ -34,7 +34,7 @@ services:
       PUBLIC_CORS_DOMAIN: https://trashcan-client.${HOST_NAME}
       SENDER_PASSWORD: ${SENDER_PASSWORD}
       RECEIVER_EMAIL: ${RECEIVER_EMAIL}
-    image: backend-sus
+    image: akagiyuu/smart-trash-bin-backend
     networks:
       - backend
   frontend:
@@ -48,7 +48,7 @@ services:
         - VITE_WS_URL=wss://trashcan-api.${HOST_NAME}
     ports:
       - 5173:80
-    image: frontend-sus
+    image: akagiyuu/smart-trash-bin-frontend
     networks:
       - backend
 

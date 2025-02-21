@@ -58,7 +58,8 @@ jobs:
               -dontwarn org.bouncycastle.jcajce.provider.**
               -dontwarn org.openjsse.**
               -dontwarn sun.security.util.ObjectIdentifier
-              -dontwarn sun.security.x509.AlgorithmId" >> src-tauri/gen/android/app/proguard-rules.pro
+              -dontwarn sun.security.x509.AlgorithmId
+              -ignorewarnings" >> src-tauri/gen/android/app/proguard-rules.pro
           cargo tauri android build
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837

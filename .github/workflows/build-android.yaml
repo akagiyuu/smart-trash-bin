@@ -1,16 +1,7 @@
 name: Android build workflow
 
 on:
-  workflow_call:
-    secrets:
-      ANDROID_RELEASE_KEYSTORE:
-        required: false
-      ANDROID_RELEASE_KEYSTORE_PASSWORD:
-        required: false
-      ANDROID_RELEASE_KEY:
-        required: false
-      ANDROID_RELEASE_KEY_PASSWORD:
-        required: false
+  workflow_dispatch:
 
 jobs:
   build:

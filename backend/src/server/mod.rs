@@ -41,7 +41,8 @@ pub fn build(state: Arc<AppState>) -> Router {
         .route("/device/{device_id}/data", get(handler::data::get_data))
         .route("/device/{device_id}/data", post(handler::data::post_data))
         .route("/device/{device_id}/name", get(handler::name::get_name))
-        .route("/device/{device_id}/name", post(handler::name::post_name));
+        .route("/device/{device_id}/name", post(handler::name::post_name))
+        .route("/device/{device_id}/full", get(handler::full::get_full));
 
     let router = router.layer(
         CorsLayer::new()

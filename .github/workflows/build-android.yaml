@@ -91,7 +91,7 @@ jobs:
         working-directory: ./mobile
         id: get-version
         run: |
-          CURRENT_VERSION=$(jq -r '.version' src-tauri/tauri.android.conf.json)
+          CURRENT_VERSION=$(jq -r '.version' src-tauri/tauri.conf.json)
           echo "current-version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: ✏️  Rename APK file (publish only)

@@ -7,34 +7,11 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import useWebSocket from 'react-use-websocket';
-import {
-    isPermissionGranted,
-    requestPermission,
-    sendNotification,
-} from '@tauri-apps/plugin-notification';
 
 type Status = {
     time: Date;
     is_open: boolean;
     trash_level: number;
-};
-
-const notification = async (status: Status) => {
-    let permissionGranted = await isPermissionGranted();
-
-    // If not we need to request it
-    if (!permissionGranted) {
-        const permission = await requestPermission();
-        permissionGranted = permission === 'granted';
-    }
-
-    // Once permission has been granted we can send the notification
-    if (permissionGranted) {
-        sendNotification({
-            title: 'Trash bin is full',
-            body: `Current trash level: ${status.trash_level}`,
-        });
-    }
 };
 
 export const Monitor = () => {
@@ -66,10 +43,6 @@ export const Monitor = () => {
             return;
         }
         status.time = new Date(status.time);
-
-        if (status.trash_level >= import.meta.env.VITE_TRASH_LEVEL_THRESHOLD) {
-            notification(status);
-        }
 
         set_is_open(status.is_open);
         set_trash_level(status.trash_level);

@@ -85,11 +85,11 @@ class TrashMonitorService : Service() {
                 Log.d(TAG, "Received WebSocket message: $text")
                 try {
                     val json = JSONObject(text)
-                    val id = json.optString("id", "")
+                    val name = json.optString("name", "")
                     val trashLevel = json.optDouble("trash_level", 0.0)
-                    Log.i(TAG, "Id: $id")
+                    Log.i(TAG, "Parsed name: $name")
                     Log.i(TAG, "Parsed trash_level: $trashLevel")
-                    showAlertNotification("Trash bin $id is full", "Trash level is $trashLevel%!")
+                    showAlertNotification("Trash bin $name is full", "Trash level is $trashLevel%!")
                 } catch (e: Exception) {
                     Log.e(TAG, "Error parsing WebSocket message", e)
                 }

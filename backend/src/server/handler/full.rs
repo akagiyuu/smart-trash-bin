@@ -9,35 +9,30 @@ use axum::{
 };
 use serde::Serialize;
 use utoipa::ToSchema;
-use uuid::Uuid;
 
-use crate::{AppState, Result};
+use crate::{database::Device, AppState, Result};
 
 #[derive(Serialize, ToSchema)]
 pub struct FullDevice {
-    id: Uuid,
+    name: String,
     trash_level: f32,
 }
 
-async fn handle_socket(state: Arc<AppState>, mut socket: WebSocket) {
+async fn handle_socket(state: Arc<AppState>, mut socket: WebSocket) -> anyhow::Result<()> {
     let mut receiver = state.sender.subscribe();
     while let Ok((id, status)) = receiver.recv().await {
+        let name = Device::get_name(id, &state.database).await?;
+
         let device = FullDevice {
-            id,
+            name,
             trash_level: status.trash_level,
         };
 
-        let json = match serde_json::to_string(&device) {
-            Ok(v) => v,
-            Err(error) => {
-                tracing::error!("Failed to serialize {:?} with error {}", status, error);
-                continue;
-            }
-        };
-        if let Err(error) = socket.send(Message::text(json)).await {
-            tracing::error!("Failed to send data to client {}", error);
-        }
+        let json = serde_json::to_string(&device)?;
+        socket.send(Message::text(json)).await?;
     }
+
+    Ok(())
 }
 
 #[utoipa::path(get, path = "/device/full")]
@@ -45,5 +40,7 @@ pub async fn get_full(
     State(state): State<Arc<AppState>>,
     ws: WebSocketUpgrade,
 ) -> Result<impl IntoResponse> {
-    Ok(ws.on_upgrade(move |socket| handle_socket(state, socket)))
+    Ok(ws.on_upgrade(|socket| async move {
+        let _ = handle_socket(state, socket).await;
+    }))
 }

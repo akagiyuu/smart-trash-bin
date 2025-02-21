@@ -112,9 +112,3 @@ jobs:
           generate_release_notes: false
           files: |
             mobile/src-tauri/gen/android/app/build/outputs/apk/universal/release/smart-trash-bin_${{ steps.get-version.outputs.current-version }}.apk
-
-      - name: 🛡️ Attest build provenance
-        uses: actions/attest-build-provenance@520d128f165991a6c774bcb264f323e3d70747f4 # v2.2.0
-        with:
-          subject-path: |
-            mobile/src-tauri/gen/android/app/build/outputs/apk/universal/release/smart-trash-bin_${{ steps.get-version.outputs.current-version }}.apk

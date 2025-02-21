@@ -46,7 +46,8 @@ jobs:
 
       - name: 🔨 Build app bundle
         run: |
-          cargo --locked tauri android build
+          cargo tauri android init
+          cargo tauri android build
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837
           RUSTFLAGS: "-D warnings"

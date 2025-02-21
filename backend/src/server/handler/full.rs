@@ -40,7 +40,7 @@ async fn handle_socket(state: Arc<AppState>, mut socket: WebSocket) {
     }
 }
 
-#[utoipa::path(get, path = "/device/:device_id/full")]
+#[utoipa::path(get, path = "/device/full")]
 pub async fn get_full(
     State(state): State<Arc<AppState>>,
     ws: WebSocketUpgrade,

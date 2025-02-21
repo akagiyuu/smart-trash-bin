@@ -43,4 +43,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation(project(":tauri-android"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.21")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
+    implementation("org.conscrypt:conscrypt-android:2.5.2")
+    implementation("org.openjsse:openjsse:1.1.1")
 }

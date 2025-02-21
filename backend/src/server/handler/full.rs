@@ -10,7 +10,7 @@ use axum::{
 use serde::Serialize;
 use utoipa::ToSchema;
 
-use crate::{database::Device, AppState, Result};
+use crate::{database::Device, AppState, Result, CONFIG};
 
 #[derive(Serialize, ToSchema)]
 pub struct FullDevice {
@@ -21,6 +21,10 @@ pub struct FullDevice {
 async fn handle_socket(state: Arc<AppState>, mut socket: WebSocket) -> anyhow::Result<()> {
     let mut receiver = state.sender.subscribe();
     while let Ok((id, status)) = receiver.recv().await {
+        if status.trash_level <= CONFIG.trash_level_threshold {
+            continue;
+        }
+
         let name = Device::get_name(id, &state.database).await?;
 
         let device = FullDevice {

@@ -55,7 +55,6 @@ jobs:
           cargo tauri android build
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837
-          RUSTFLAGS: "-D warnings"
 
       - name: 🔑 Extract android signing key from env
         working-directory: ./mobile

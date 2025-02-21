@@ -2,6 +2,7 @@ pub mod data;
 pub mod list;
 pub mod name;
 pub mod register;
+pub mod full;
 
 #[utoipa::path(
     get,

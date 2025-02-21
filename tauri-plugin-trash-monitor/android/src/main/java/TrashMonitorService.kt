@@ -74,7 +74,7 @@ class TrashMonitorService : Service() {
     private fun startWebSocketConnection() {
         Log.i(TAG, "Starting WebSocket connection")
         val request = Request.Builder()
-            .url("wss://trashcan-api.arisavinh.dev/device/3fa85f64-5717-4562-b3fc-2c963f66afa6/data")
+            .url("wss://trashcan-api.arisavinh.dev/device/full")
             .build()
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -85,11 +85,11 @@ class TrashMonitorService : Service() {
                 Log.d(TAG, "Received WebSocket message: $text")
                 try {
                     val json = JSONObject(text)
+                    val name = json.optString("name", "")
                     val trashLevel = json.optDouble("trash_level", 0.0)
+                    Log.i(TAG, "Parsed name: $name")
                     Log.i(TAG, "Parsed trash_level: $trashLevel")
-                    if (trashLevel > 80.0) {
-                        showAlertNotification("Trash Alert", "Trash level is $trashLevel%!")
-                    }
+                    showAlertNotification("Trash bin $name is full", "Trash level is $trashLevel%!")
                 } catch (e: Exception) {
                     Log.e(TAG, "Error parsing WebSocket message", e)
                 }

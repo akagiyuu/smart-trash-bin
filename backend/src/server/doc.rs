@@ -14,10 +14,8 @@ use super::handler;
         handler::data::post_data,
         handler::name::get_name,
         handler::name::post_name,
+        handler::full::get_full,
     ),
-    components(schemas(
-        database::Status,
-        handler::data::Data
-    ))
+    components(schemas(database::Status, handler::data::Data, handler::full::FullDevice))
 )]
 pub struct ApiDoc;

@@ -41,7 +41,6 @@ services:
       - backend
   frontend:
     container_name: trash-bin-frontend
-    restart: always
     build:
       context: ./frontend
       dockerfile: ./Dockerfile

@@ -47,33 +47,30 @@ pub async fn get_data(
 
 #[derive(ToSchema, Deserialize)]
 pub struct Data {
+    pub id: Uuid,
     pub is_open: bool,
     pub trash_level: f32,
 }
 
 #[utoipa::path(
     post,
-    path = "/device/:device_id/data",
-    request_body = Status,
+    path = "/device/data",
+    request_body = Data,
 )]
-pub async fn post_data(
-    State(state): State<Arc<AppState>>,
-    Path(device_id): Path<Uuid>,
-    Json(data): Json<Data>,
-) -> Result<()> {
+pub async fn post_data(State(state): State<Arc<AppState>>, Json(data): Json<Data>) -> Result<()> {
     let status = Status {
         time: Utc::now(),
         is_open: data.is_open,
         trash_level: data.trash_level,
     };
 
-    let _ = state.sender.send((device_id, status));
+    let _ = state.sender.send((data.id, status));
 
     if data.trash_level > CONFIG.trash_level_threshold {
         util::send_email(
             format!(
                 "Device {} exceed trash level threshold",
-                Device::get_name(device_id, &state.database)
+                Device::get_name(data.id, &state.database)
                     .await
                     .map_err(anyhow::Error::from)?
             ),
@@ -82,7 +79,7 @@ pub async fn post_data(
     }
 
     status
-        .insert(device_id, &state.database)
+        .insert(data.id, &state.database)
         .await
         .map_err(anyhow::Error::from)?;
 

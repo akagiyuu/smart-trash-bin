@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -24,6 +26,8 @@ class TrashMonitorService : Service() {
     private val client: OkHttpClient = OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS)
         .build()
+    // Flag to control whether we should reconnect
+    private var shouldReconnect: Boolean = true
 
     override fun onCreate() {
         super.onCreate()
@@ -41,6 +45,8 @@ class TrashMonitorService : Service() {
 
     override fun onDestroy() {
         Log.i(TAG, "Service onDestroy")
+        // Prevent any further reconnection attempts
+        shouldReconnect = false
         webSocket.cancel()
         super.onDestroy()
     }
@@ -97,8 +103,35 @@ class TrashMonitorService : Service() {
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                 Log.e(TAG, "WebSocket onFailure", t)
+                scheduleReconnect()
+            }
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                Log.i(TAG, "WebSocket onClosing: $code / $reason")
+                webSocket.close(code, reason)
+                scheduleReconnect()
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                Log.i(TAG, "WebSocket onClosed: $code / $reason")
+                scheduleReconnect()
             }
         })
+    }
+
+    private fun scheduleReconnect() {
+        if (!shouldReconnect) {
+            Log.i(TAG, "Service stopped; not scheduling reconnection.")
+            return
+        }
+        val delayMillis: Long = 5000  // 5 seconds delay before reconnecting
+        Log.i(TAG, "Scheduling WebSocket reconnection in $delayMillis ms")
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (shouldReconnect) {
+                Log.i(TAG, "Attempting to reconnect WebSocket")
+                startWebSocketConnection()
+            }
+        }, delayMillis)
     }
 
     private fun showAlertNotification(title: String, content: String) {

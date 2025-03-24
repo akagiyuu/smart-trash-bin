@@ -1,18 +1,18 @@
 use anyhow::Result;
 use lettre::{
-    message::header::ContentType, transport::smtp::authentication::Credentials, Message,
-    SmtpTransport, Transport,
+    message::header::ContentType, transport::smtp::authentication::Credentials, AsyncSmtpTransport,
+    AsyncTransport, Message, Tokio1Executor,
 };
 
 use crate::CONFIG;
 
-pub fn send_email(subject: String, body: String) -> Result<()> {
+pub async fn send_email(subject: String, body: String) -> Result<()> {
     let creds = Credentials::new(
         CONFIG.sender_email.to_owned(),
         CONFIG.sender_password.to_owned(),
     );
 
-    let mailer = SmtpTransport::relay("smtp.gmail.com")?
+    let mailer = AsyncSmtpTransport::<Tokio1Executor>::relay("smtp.gmail.com")?
         .credentials(creds)
         .build();
 
@@ -23,7 +23,7 @@ pub fn send_email(subject: String, body: String) -> Result<()> {
         .header(ContentType::TEXT_PLAIN)
         .body(body)?;
 
-    mailer.send(&email)?;
+    mailer.send(email).await?;
 
     Ok(())
 }

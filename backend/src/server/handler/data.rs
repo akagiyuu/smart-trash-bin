@@ -69,15 +69,24 @@ pub async fn post_data(State(state): State<Arc<AppState>>, Json(data): Json<Data
     if data.trash_level > CONFIG.trash_level_threshold {
         let state = state.clone();
         tokio::spawn(async move {
-            let Ok(name) = Device::get_name(data.id, &state.database).await else {
-                return;
+            let name = match Device::get_name(data.id, &state.database).await {
+                Ok(v) => v,
+                Err(error) => {
+                    tracing::error!("{:#?}", error);
+                    return;
+                }
             };
 
-            let _ = util::send_email(
+            if let Err(error) = util::send_email(
                 format!("Device {} exceed trash level threshold", name),
                 format!("Current trash level: {}%", data.trash_level),
             )
-            .await;
+            .await
+            {
+                tracing::error!("{:#?}", error);
+            };
+
+            tracing::info!("Send email success");
         });
     }
 

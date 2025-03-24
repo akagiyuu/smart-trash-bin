@@ -66,6 +66,9 @@ jobs:
           cargo tauri android build
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_WS_URL: ${{ secrets.VITE_WS_URL }}
+
 
       - name: 🔑 Extract android signing key from env
         working-directory: ./mobile
